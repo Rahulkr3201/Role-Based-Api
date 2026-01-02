@@ -1,11 +1,23 @@
-1. first setup index.js use express for that . and also use doenv for handling env.use app.use for express to handle json
+1. First, we set up index.js using Express. We also use dotenv for handling environment variables and apply app.use(express.json()) so Express can handle JSON data.
 
-2. then we made the database dbcoonnect in configuration and connected the databse using mongodbid using moongoose.and bring that dbconnect in index.js to make it run in index.js file .
+2. Then, we create a database connection in the config folder and connect MongoDB using Mongoose. This dbConnect function is imported into index.js and executed there so the database connects when the server starts.
 
-3. create a schema inside the model using moongose new schema and fill its requirement and exports
+3. Next, we create a schema inside the models folder using mongoose.Schema, define the required fields, and export the model.
 
-4. now in auth controller import the User schema to use in login and register.
-5. when we make api call . the pemail and paswrod travel to backend using Https from req.body , not with the api call . so it cant be altered in between .
-6. we recieve the passwor we hash them and then push to the database. when user login the same user is found on the basic of username ans the password of username and entered now is equal then send the res. we also generate the token so thet user dont have to login evrytime it just remind the server of that user. we dont directly senf the token it is not safe as if it gets in wrong hand it will be bad . we try to send token in cookies which enssured the transportation reliablility because fo its httponly transport protocol. jwt handles the authentication but cookie handle secure storage of token and automatic transmission. jwt protected inside httponly cookie.on every request token is send if it is verified it good . its not user has to agaun login. it is send client evertime with request.
+4. In the auth controller, we import the User schema to handle register and login functionality.
 
-7.
+5. When an API call is made, the email and password travel to the backend securely over HTTPS through req.body, not via the URL or query parameters. This prevents the data from being altered in transit.
+
+6. When registering, we hash the password and store it in the database. During login, the user is found using the email, and the entered password is compared with the stored hashed password. If they match, a response is sent and a JWT token is generated so the user does not need to log in every time.
+7. We do not send the token directly in the response because it is unsafe if it falls into the wrong hands. Instead, we store the token in an HTTP-only cookie, which ensures secure storage and reliable transmission.
+   JWT handles authentication, while cookies handle secure storage and automatic transmission. The JWT is protected inside the HTTP-only cookie. On every request, the token is sent automatically; if it is verified, the user remains logged in. Otherwise, the user must log in again.
+
+8. We then create two middleware functions:
+
+verifyToken to verify the user using the JWT
+
+authorizedRoles for role-based access control
+
+In authorizedRoles, we extract the user role from req.user (decoded from the token) and check if it exists in the allowed roles. If it does, the request is allowed; otherwise, access is denied.
+
+This completes the role-based authentication and authorization API.
